@@ -1,3 +1,7 @@
 package main
 
-import "github.com/spf13/cobra"
+import "github.com/tgrangeo/whappen/cmd"
+
+func main() {
+	cmd.Execute()
+}

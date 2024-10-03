@@ -6,19 +6,19 @@
 
 - **Goal**: Initialize the project and set up a basic CLI framework.
 - **Tasks**:
-    [x] Initialize a new Go module.
-    [ ] Choose a CLI framework (e.g., [Cobra](https://github.com/spf13/cobra) or Go’s built-in `flag` package).
-    [ ] Set up basic commands like `check` and `list`.
-    [ ] Research and select a Go RSS parser library (e.g., `github.com/mmcdole/gofeed`).
+  [x] Initialize a new Go module.
+  [x] Choose a CLI framework (e.g., [Cobra](https://github.com/spf13/cobra) or Go’s built-in `flag` package).
+  [x] Set up basic commands like `check` and `list`.
+  [x] Research and select a Go RSS parser library (e.g., `github.com/mmcdole/gofeed`).
 
 **Session 2: RSS Feed Parsing**
 
 - **Goal**: Fetch and parse RSS feeds.
 - **Tasks**:
-    [ ] Integrate the RSS parser.
-   [ ] Create a function to fetch RSS feeds from a list of URLs.
-    [ ]. Parse the feed to display titles, publication dates, and URLs.
-    [ ] Save parsed articles into a local JSON or SQLite file to track read/unread status.
+  [x] Integrate the RSS parser.
+  [x] Create a function to fetch RSS feeds from a list of URLs.
+  [x]. Parse the feed to display titles, publication dates, and URLs.
+  [ ] Save parsed articles into a local JSON or SQLite file to track read/unread status.
 
 ### **Phase 2: Notification System**
 
@@ -26,17 +26,17 @@
 
 - **Goal**: Add functionality to track unread articles.
 - **Tasks**:
-    [ ] Implement a function to differentiate between read and unread articles.
-    [ ] Store article status in the local storage (e.g., a simple JSON file or SQLite).
-    [ ] Test the functionality by marking articles as read/unread.
+  [ ] Implement a function to differentiate between read and unread articles.
+  [ ] Store article status in the local storage (e.g., a simple JSON file or SQLite).
+  [ ] Test the functionality by marking articles as read/unread.
 
 **Session 4: Terminal Notifications**
 
 - **Goal**: Display a notification when there are unread articles.
 - **Tasks**:
-    [ ] Research terminal notification tools (e.g., `notify-send` for Linux, `osascript` for macOS).
-   [ ] Implement a check at the start of the CLI for unread articles.
-    [ ] Show a notification or alert in the terminal with the number of unread articles.
+  [ ] Research terminal notification tools (e.g., `notify-send` for Linux, `osascript` for macOS).
+  [ ] Implement a check at the start of the CLI for unread articles.
+  [ ] Show a notification or alert in the terminal with the number of unread articles.
 
 ### **Phase 3: View and Open Articles**
 
@@ -44,15 +44,15 @@
 
 - **Goal**: List all unread articles in the terminal.
 - **Tasks**:
-    [ ] Implement a `list` command to show all unread articles with their titles and publication dates.
-    [ ] Add options to mark articles as read directly from the list.
+  [ ] Implement a `list` command to show all unread articles with their titles and publication dates.
+  [ ] Add options to mark articles as read directly from the list.
 
 **Session 6: Command to Open Articles**
 
 - **Goal**: Add functionality to open articles from the terminal.
 - **Tasks**:
-    [ ] Implement an `open` command to open an article in the browser.
-    [ ] Research and integrate system-agnostic ways to open URLs (`exec.Command` or libraries like `github.com/skratchdot/open-golang`).
+  [ ] Implement an `open` command to open an article in the browser.
+  [ ] Research and integrate system-agnostic ways to open URLs (`exec.Command` or libraries like `github.com/skratchdot/open-golang`).
 
 ### **Phase 4: AI Summaries (Advanced)**
 
@@ -60,16 +60,16 @@
 
 - **Goal**: Implement basic AI summaries for articles (requires third-party API).
 - **Tasks**:
-    [ ] Research AI summary services (OpenAI, Hugging Face, etc.).
-    [ ] Set up API integration to fetch summaries of articles.
-    [ ] Display summaries in the terminal when requested.
+  [ ] Research AI summary services (OpenAI, Hugging Face, etc.).
+  [ ] Set up API integration to fetch summaries of articles.
+  [ ] Display summaries in the terminal when requested.
 
 **Session 8: Display Summaries in CLI**
 
 - **Goal**: Add command to generate and show AI summaries.
 - **Tasks**:
-    [ ] Implement a `summarize` command to fetch and display AI-generated summaries for unread articles.
-    [ ] Add the option to read the full article if the summary seems interesting.
+  [ ] Implement a `summarize` command to fetch and display AI-generated summaries for unread articles.
+  [ ] Add the option to read the full article if the summary seems interesting.
 
 ### **Optional Cool Features to Add Later**
 
