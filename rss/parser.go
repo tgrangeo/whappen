@@ -2,7 +2,6 @@ package rss
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -10,7 +9,13 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-func FetchRSS() {
+type Article struct {
+	Title string
+	Link  string
+	Date  string
+}
+
+func FetchRSS() []Article {
 	file, err := os.Open("./rss/rss_feeds.txt")
 	if err != nil {
 		log.Fatalf("Error opening the RSS feed list file: %v", err)
@@ -18,6 +23,8 @@ func FetchRSS() {
 	defer file.Close()
 	fp := gofeed.NewParser()
 	scanner := bufio.NewScanner(file)
+
+	articleArray := []Article{}
 	for scanner.Scan() {
 		url := strings.TrimSpace(scanner.Text())
 		if url == "" {
@@ -28,15 +35,16 @@ func FetchRSS() {
 			log.Printf("Error fetching the RSS feed from %s: %v", url, err)
 			continue
 		}
-		fmt.Println("Feed Title:", feed.Title)
 		for _, item := range feed.Items {
-			fmt.Println("Title:", item.Title)
-			fmt.Println("Link:", item.Link)
-			fmt.Println("Published Date:", item.Published)
-			fmt.Println("---\n\n")
+			articleArray = append(articleArray, Article{
+				Title: item.Title,
+				Link: item.Link,
+				Date: item.Published,
+			})
 		}
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatalf("Error reading the RSS feed list file: %v", err)
 	}
+	return articleArray
 }

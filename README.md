@@ -7,7 +7,7 @@
 - **Goal**: Initialize the project and set up a basic CLI framework.
 - **Tasks**:
   [x] Initialize a new Go module.
-  [x] Choose a CLI framework (e.g., [Cobra](https://github.com/spf13/cobra) or Go’s built-in `flag` package).
+  [x] Choose a CLI framework (changing for survey better user interface).
   [x] Set up basic commands like `check` and `list`.
   [x] Research and select a Go RSS parser library (e.g., `github.com/mmcdole/gofeed`).
 
