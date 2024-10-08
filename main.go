@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os/exec"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/joho/godotenv"
+	"github.com/tgrangeo/whappen/openAi"
 	"github.com/tgrangeo/whappen/rss"
 )
 
@@ -84,7 +88,22 @@ func openArticleMenu(art rss.Article) {
 				return
 			}
 		case "resume":
-			fmt.Println("WIP")
+			resp, err := http.Get(art.Link)
+			if err != nil {
+				fmt.Println("Error fetching article:", err)
+				return
+			}
+			defer resp.Body.Close()
+			if resp.StatusCode != http.StatusOK {
+				fmt.Println("Error: Failed to fetch article, status code:", resp.StatusCode)
+				return
+			}
+			rawContent, err := io.ReadAll(resp.Body)
+			if err != nil {
+				fmt.Println("Error reading article content:", err)
+				return
+			}
+			openAi.Resume(rawContent)
 		case "save for later":
 			fmt.Println("WIP")
 		case "👋 return":
@@ -95,6 +114,11 @@ func openArticleMenu(art rss.Article) {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file:", err)
+		return
+	}
 	for {
 		answers := struct {
 			Menu string

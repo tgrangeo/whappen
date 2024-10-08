@@ -44,7 +44,7 @@
 
 - **Goal**: List all unread articles in the terminal.
 - **Tasks**:
-  [ ] Implement a `list` command to show all unread articles with their titles and publication dates.
+  [x] Implement a `list` command to show all unread articles with their titles and publication dates.
   [ ] Add options to mark articles as read directly from the list.
 
 **Session 6: Command to Open Articles**
