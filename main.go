@@ -1,33 +1,22 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"os/exec"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/joho/godotenv"
+	database "github.com/tgrangeo/whappen/db"
 	"github.com/tgrangeo/whappen/openAi"
 	"github.com/tgrangeo/whappen/rss"
 )
 
-var qs = []*survey.Question{
-	{
-		Name: "menu",
-		Prompt: &survey.Select{
-			Message: "Welcome to Whappen:",
-			VimMode: true,
-			Options: []string{
-				"📰 What's new",
-				"💾 What's old/archived",
-				"💡 Manage rss flux",
-				"👋 quit"},
-		},
-	},
-}
-
-func listArticle(articles []rss.Article) {
+func listArticle(articles []rss.Article, db *sql.DB) {
 	for {
 		var titles []string
 		for _, article := range articles {
@@ -53,13 +42,17 @@ func listArticle(articles []rss.Article) {
 			}
 		}
 		if selectedTitle == "👋 Return" {
-			return
+			mainMenu(db)
 		}
-		openArticleMenu(selectedArticle)
+		openArticleMenu(selectedArticle, db)
 	}
 }
 
-func openArticleMenu(art rss.Article) {
+func openArticleMenu(art rss.Article, db *sql.DB) {
+	laterValue := "save for later"
+	if art.ToRead {
+		laterValue = "mark as read"
+	}
 	articleMenu := []*survey.Question{
 		{
 			Name: "Article Menu",
@@ -68,7 +61,7 @@ func openArticleMenu(art rss.Article) {
 				Options: []string{
 					"open in browser",
 					"resume",
-					"save for later",
+					laterValue,
 					"👋 return"},
 			},
 		},
@@ -82,6 +75,7 @@ func openArticleMenu(art rss.Article) {
 		}
 		switch response {
 		case "open in browser":
+			fmt.Println(art.Link)
 			err = exec.Command("open", art.Link).Start()
 			if err != nil {
 				fmt.Println("Error:", err)
@@ -105,12 +99,67 @@ func openArticleMenu(art rss.Article) {
 			}
 			openAi.Resume(rawContent)
 		case "save for later":
-			fmt.Println("WIP")
+			fmt.Println(art)
+			database.InsertToRead(db, art)
+			return
+		case "mark as read":
+			database.RemoveArticle(db, art.Link)
+			toReadList, err := database.FetchToReadArticle(db)
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+			listArticle(toReadList, db)
 		case "👋 return":
 			return
 		}
 	}
 
+}
+
+func mainMenu(db *sql.DB) {
+	menu := []*survey.Question{
+		{
+			Name: "menu",
+			Prompt: &survey.Select{
+				Message: "Welcome to Whappen:",
+				VimMode: true,
+				Options: []string{
+					"📰 What's new",
+					"💾 What's to read",
+					"💡 Manage rss flux",
+					"👋 quit"},
+			},
+		},
+	}
+	for {
+		answers := struct {
+			Menu string
+		}{}
+		err := survey.Ask(menu, &answers)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		switch answers.Menu {
+		case "📰 What's new":
+			res := rss.FetchRSS()
+			listArticle(res, db)
+		case "💾 What's to read":
+			toReadList, err := database.FetchToReadArticle(db)
+			fmt.Println(toReadList)
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+			listArticle(toReadList, db)
+		case "💡 Manage rss flux":
+			fmt.Println("WIP")
+		case "👋 quit":
+			fmt.Println("see you next time 😄")
+			os.Exit(0)
+		}
+	}
 }
 
 func main() {
@@ -119,26 +168,11 @@ func main() {
 		fmt.Println("Error loading .env file:", err)
 		return
 	}
-	for {
-		answers := struct {
-			Menu string
-		}{}
-		err := survey.Ask(qs, &answers)
-		if err != nil {
-			fmt.Println(err.Error())
-			return
-		}
-		switch answers.Menu {
-		case "📰 What's new":
-			res := rss.FetchRSS()
-			listArticle(res)
-		case "💾 What's old/archived":
-			fmt.Println("WIP")
-		case "💡 Manage rss flux":
-			fmt.Println("WIP")
-		case "👋 quit":
-			fmt.Println("see you next time 😄")
-			return
-		}
+	db, err := database.InitDB()
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
 	}
+	defer db.Close()
+
+	mainMenu(db)
 }

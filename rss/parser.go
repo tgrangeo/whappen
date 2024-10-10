@@ -13,6 +13,16 @@ type Article struct {
 	Title string
 	Link  string
 	Date  string
+	ToRead bool
+}
+
+func NewArticle(title, link, date string) Article {
+	return Article{
+		Title:    title,
+		Link:     link,
+		Date:     date,
+		ToRead:   false,
+	}
 }
 
 func FetchRSS() []Article {
@@ -36,11 +46,7 @@ func FetchRSS() []Article {
 			continue
 		}
 		for _, item := range feed.Items {
-			articleArray = append(articleArray, Article{
-				Title: item.Title,
-				Link: item.Link,
-				Date: item.Published,
-			})
+			articleArray = append(articleArray, NewArticle(item.Title,item.Link,item.Published))
 		}
 	}
 	if err := scanner.Err(); err != nil {
