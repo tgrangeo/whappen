@@ -19,6 +19,9 @@ import (
 func listArticle(articles []rss.Article, db *sql.DB) {
 	for {
 		var titles []string
+		if len(articles) == 0 {
+			fmt.Println("\033[31mEmpty list\033[0m")
+		}
 		for _, article := range articles {
 			titles = append(titles, article.Title)
 		}
@@ -75,7 +78,6 @@ func openArticleMenu(art rss.Article, db *sql.DB) {
 		}
 		switch response {
 		case "open in browser":
-			fmt.Println(art.Link)
 			err = exec.Command("open", art.Link).Start()
 			if err != nil {
 				fmt.Println("Error:", err)
@@ -99,7 +101,6 @@ func openArticleMenu(art rss.Article, db *sql.DB) {
 			}
 			openAi.Resume(rawContent)
 		case "save for later":
-			fmt.Println(art)
 			database.InsertToRead(db, art)
 			return
 		case "mark as read":
@@ -147,7 +148,6 @@ func mainMenu(db *sql.DB) {
 			listArticle(res, db)
 		case "💾 What's to read":
 			toReadList, err := database.FetchToReadArticle(db)
-			fmt.Println(toReadList)
 			if err != nil {
 				fmt.Println(err.Error())
 				return

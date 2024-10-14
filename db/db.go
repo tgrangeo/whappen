@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/tgrangeo/whappen/rss"
@@ -12,8 +13,7 @@ func InitDB() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	query := `
-	CREATE TABLE IF NOT EXISTS article (
+	query := `CREATE TABLE IF NOT EXISTS article (
 	    id INTEGER PRIMARY KEY AUTOINCREMENT,
 	    title TEXT NOT NULL,
 	    link TEXT NOT NULL,
@@ -30,14 +30,14 @@ func InitDB() (*sql.DB, error) {
 
 func InsertArticle(db *sql.DB, article rss.Article) error {
 	query := `INSERT INTO article (title, link, date, to_read) 
-	          VALUES (?, ?, ?, ?, ?)`
+          VALUES (?, ?, ?, ?)`
 	_, err := db.Exec(query, article.Title, article.Link, article.Date, article.ToRead)
 	return err
 }
 
 func InsertToRead(db *sql.DB, article rss.Article) error {
 	query := `INSERT INTO article (title, link, date, to_read) 
-	          VALUES (?, ?, ?, ?, ?)`
+	          VALUES (?, ?, ?, ?)`
 	_, err := db.Exec(query, article.Title, article.Link, article.Date, true)
 	return err
 }
@@ -62,6 +62,7 @@ func FetchToReadArticle(db *sql.DB) ([]rss.Article, error) {
 		if err := rows.Scan(&article.Title, &article.Link, &article.Date, &article.ToRead); err != nil {
 			return nil, err
 		}
+		fmt.Println("here",article)
 		articles = append(articles, article)
 	}
 
